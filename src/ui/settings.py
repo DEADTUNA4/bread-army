@@ -172,7 +172,8 @@ class SettingsMenu(State):
         surface.blit(title, title.get_rect(center=(WINDOW_WIDTH // 2, 50)))
 
         ctrl_title = pygame.font.Font(None, 28)
-        surface.blit(ctrl_title.render("CONTROLS", True, TAN), ctrl_title.get_rect(center=(WINDOW_WIDTH // 2, 100)))
+        ctrl_surf = ctrl_title.render("CONTROLS", True, TAN)
+        surface.blit(ctrl_surf, ctrl_surf.get_rect(center=(WINDOW_WIDTH // 2, 100)))
 
         action_font = pygame.font.Font(None, 28)
         key_font = pygame.font.Font(None, 24)
