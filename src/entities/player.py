@@ -26,17 +26,17 @@ class Player:
         self.kickback = 0
         self.powerup = None
 
-    def handle_input(self, keys):
+    def handle_input(self, is_pressed):
         if self.dying:
             return
         self.vx = 0
-        if keys[pygame.K_LEFT] or keys[pygame.K_a]:
+        if is_pressed("left"):
             self.vx = -PLAYER_SPEED
             self.facing_right = False
-        if keys[pygame.K_RIGHT] or keys[pygame.K_d]:
+        if is_pressed("right"):
             self.vx = PLAYER_SPEED
             self.facing_right = True
-        if (keys[pygame.K_SPACE] or keys[pygame.K_UP] or keys[pygame.K_w]) and self.on_ground:
+        if is_pressed("jump") and self.on_ground:
             self.vy = PLAYER_JUMP
 
     def attack(self):
