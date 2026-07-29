@@ -113,6 +113,8 @@ class PlayingState(State):
         keys = pygame.key.get_pressed()
         for key_name in self.controls.get(action, []):
             key_val = getattr(pygame, key_name, None)
+            if key_val is None:
+                key_val = getattr(pygame, key_name.lower(), None)
             if key_val is not None and keys[key_val]:
                 return True
         return False
@@ -120,6 +122,8 @@ class PlayingState(State):
     def _key_just_pressed(self, action, event):
         for key_name in self.controls.get(action, []):
             key_val = getattr(pygame, key_name, None)
+            if key_val is None:
+                key_val = getattr(pygame, key_name.lower(), None)
             if key_val is not None and event.key == key_val:
                 return True
         return False

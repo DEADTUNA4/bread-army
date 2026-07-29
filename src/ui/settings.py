@@ -120,8 +120,11 @@ class SettingsMenu(State):
 
         if event.type == pygame.KEYDOWN:
             if self.rebinding:
-                key_name = pygame.key.name(event.key).upper()
-                key_name = "K_" + key_name if not key_name.startswith("K_") else key_name
+                raw_name = pygame.key.name(event.key)
+                if len(raw_name) == 1 and raw_name.isalpha():
+                    key_name = "K_" + raw_name.lower()
+                else:
+                    key_name = "K_" + raw_name.upper()
                 if event.key == pygame.K_ESCAPE:
                     self.rebinding = False
                     return
