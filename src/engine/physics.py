@@ -30,23 +30,25 @@ class Physics:
         for _ in range(int(steps_x)):
             entity.rect.x += step_dx
             for tile in tiles:
-                if entity.rect.colliderect(tile.rect):
+                r = tile.rect if hasattr(tile, 'rect') else tile
+                if entity.rect.colliderect(r):
                     if step_dx > 0:
-                        entity.rect.right = tile.rect.left
+                        entity.rect.right = r.left
                     elif step_dx < 0:
-                        entity.rect.left = tile.rect.right
+                        entity.rect.left = r.right
                     entity.vx = 0
 
         for _ in range(int(steps_y)):
             entity.rect.y += step_dy
             for tile in tiles:
-                if entity.rect.colliderect(tile.rect):
+                r = tile.rect if hasattr(tile, 'rect') else tile
+                if entity.rect.colliderect(r):
                     if step_dy > 0:
-                        entity.rect.bottom = tile.rect.top
+                        entity.rect.bottom = r.top
                         entity.vy = 0
                         entity.on_ground = True
                     elif step_dy < 0:
-                        entity.rect.top = tile.rect.bottom
+                        entity.rect.top = r.bottom
                         entity.vy = 0
 
         if map_bounds:
