@@ -1,0 +1,17 @@
+__pycache__/
+*.pyc
+*.pyo
+*.egg-info/
+dist/
+build/
+*.egg
+.vscode/
+.idea/
+*.swp
+*~
+.DS_Store
+Thumbs.db
+assets/sprites/*.png
+!assets/sprites/.gitkeep
+assets/sounds/*.wav
+!assets/sounds/.gitkeep
