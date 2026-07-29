@@ -256,6 +256,15 @@ enemies_01 = [
     {"type": "mold_slime", "x": 3500, "y": 800},
     {"type": "bread_golem", "x": 3600, "y": 700},
     {"type": "toast", "x": 600, "y": 550},
+    {"type": "moving_platform", "x": 700, "y": 500, "move_x": 128, "move_y": 0, "speed": 0.03, "width": 96},
+    {"type": "crumbling_block", "x": 1440, "y": 576},
+    {"type": "crumbling_block", "x": 1472, "y": 576},
+    {"type": "crumbling_block", "x": 1504, "y": 576},
+    {"type": "disappearing_block", "x": 2600, "y": 640, "appear_time": 90, "disappear_time": 60},
+    {"type": "disappearing_block", "x": 2632, "y": 640, "appear_time": 90, "disappear_time": 60},
+    {"type": "moving_platform", "x": 3000, "y": 480, "move_x": 0, "move_y": 96, "speed": 0.025, "width": 64},
+    {"type": "fake_block", "x": 960, "y": 576},
+    {"type": "fake_block", "x": 992, "y": 576},
 ]
 
 enemies_02 = [
@@ -272,6 +281,18 @@ enemies_02 = [
     {"type": "bread_golem", "x": 3200, "y": 600},
     {"type": "croissant", "x": 900, "y": 450},
     {"type": "mold_king", "x": 3500, "y": 600},
+    {"type": "moving_platform", "x": 600, "y": 500, "move_x": 160, "move_y": 0, "speed": 0.035, "width": 96},
+    {"type": "moving_platform", "x": 1500, "y": 400, "move_x": 0, "move_y": 128, "speed": 0.03, "width": 64},
+    {"type": "crumbling_block", "x": 2100, "y": 640},
+    {"type": "crumbling_block", "x": 2132, "y": 640},
+    {"type": "crumbling_block", "x": 2164, "y": 640},
+    {"type": "disappearing_block", "x": 2600, "y": 576, "appear_time": 80, "disappear_time": 50},
+    {"type": "disappearing_block", "x": 2632, "y": 576, "appear_time": 80, "disappear_time": 50},
+    {"type": "disappearing_block", "x": 2664, "y": 576, "appear_time": 80, "disappear_time": 50},
+    {"type": "moving_platform", "x": 3000, "y": 350, "move_x": 128, "move_y": 0, "speed": 0.04, "width": 96},
+    {"type": "fake_block", "x": 1000, "y": 700},
+    {"type": "fake_block", "x": 1032, "y": 700},
+    {"type": "fake_block", "x": 1064, "y": 700},
 ]
 
 enemies_03 = [
@@ -290,6 +311,15 @@ enemies_03 = [
     {"type": "mold_king", "x": 3400, "y": 500},
     {"type": "toast", "x": 500, "y": 550},
     {"type": "bagel", "x": 2200, "y": 400},
+    {"type": "moving_platform", "x": 400, "y": 500, "move_x": 96, "move_y": 0, "speed": 0.04, "width": 64},
+    {"type": "moving_platform", "x": 1800, "y": 400, "move_x": 0, "move_y": 96, "speed": 0.035, "width": 64},
+    {"type": "moving_platform", "x": 2700, "y": 350, "move_x": 128, "move_y": 0, "speed": 0.03, "width": 96},
+    {"type": "crumbling_block", "x": 1100, "y": 576},
+    {"type": "crumbling_block", "x": 1132, "y": 576},
+    {"type": "disappearing_block", "x": 2400, "y": 500, "appear_time": 70, "disappear_time": 45},
+    {"type": "disappearing_block", "x": 2432, "y": 500, "appear_time": 70, "disappear_time": 45},
+    {"type": "fake_block", "x": 1700, "y": 500},
+    {"type": "fake_block", "x": 1732, "y": 500},
 ]
 
 enemies_04 = [
@@ -308,6 +338,18 @@ enemies_04 = [
     {"type": "bread_golem", "x": 3400, "y": 500},
     {"type": "mold_king", "x": 3600, "y": 500},
     {"type": "sourdough", "x": 2400, "y": 450},
+    {"type": "moving_platform", "x": 500, "y": 450, "move_x": 0, "move_y": 128, "speed": 0.03, "width": 64},
+    {"type": "moving_platform", "x": 1200, "y": 350, "move_x": 128, "move_y": 0, "speed": 0.035, "width": 96},
+    {"type": "moving_platform", "x": 2000, "y": 400, "move_x": 0, "move_y": 96, "speed": 0.04, "width": 64},
+    {"type": "moving_platform", "x": 2900, "y": 300, "move_x": 96, "move_y": 0, "speed": 0.03, "width": 96},
+    {"type": "crumbling_block", "x": 1500, "y": 640},
+    {"type": "crumbling_block", "x": 1532, "y": 640},
+    {"type": "crumbling_block", "x": 1564, "y": 640},
+    {"type": "disappearing_block", "x": 2600, "y": 500, "appear_time": 60, "disappear_time": 40},
+    {"type": "disappearing_block", "x": 2632, "y": 500, "appear_time": 60, "disappear_time": 40},
+    {"type": "disappearing_block", "x": 2664, "y": 500, "appear_time": 60, "disappear_time": 40},
+    {"type": "fake_block", "x": 800, "y": 700},
+    {"type": "fake_block", "x": 832, "y": 700},
 ]
 
 enemies_05 = [
@@ -327,6 +369,22 @@ enemies_05 = [
     {"type": "croissant", "x": 1100, "y": 550},
     {"type": "bagel", "x": 2000, "y": 400},
     {"type": "sourdough", "x": 2900, "y": 500},
+    {"type": "moving_platform", "x": 400, "y": 500, "move_x": 128, "move_y": 0, "speed": 0.04, "width": 96},
+    {"type": "moving_platform", "x": 1000, "y": 400, "move_x": 0, "move_y": 96, "speed": 0.035, "width": 64},
+    {"type": "moving_platform", "x": 1600, "y": 350, "move_x": 128, "move_y": 0, "speed": 0.03, "width": 96},
+    {"type": "moving_platform", "x": 2400, "y": 300, "move_x": 0, "move_y": 128, "speed": 0.04, "width": 64},
+    {"type": "moving_platform", "x": 3100, "y": 400, "move_x": 96, "move_y": 0, "speed": 0.045, "width": 96},
+    {"type": "crumbling_block", "x": 800, "y": 700},
+    {"type": "crumbling_block", "x": 832, "y": 700},
+    {"type": "crumbling_block", "x": 2600, "y": 640},
+    {"type": "crumbling_block", "x": 2632, "y": 640},
+    {"type": "disappearing_block", "x": 1400, "y": 500, "appear_time": 50, "disappear_time": 35},
+    {"type": "disappearing_block", "x": 1432, "y": 500, "appear_time": 50, "disappear_time": 35},
+    {"type": "disappearing_block", "x": 3000, "y": 400, "appear_time": 60, "disappear_time": 40},
+    {"type": "disappearing_block", "x": 3032, "y": 400, "appear_time": 60, "disappear_time": 40},
+    {"type": "fake_block", "x": 600, "y": 700},
+    {"type": "fake_block", "x": 2300, "y": 600},
+    {"type": "fake_block", "x": 2332, "y": 600},
 ]
 
 

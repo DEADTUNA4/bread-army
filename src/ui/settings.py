@@ -134,8 +134,10 @@ class SettingsMenu(State):
 
             if event.key == pygame.K_UP or event.key == pygame.K_w:
                 self.selected_action = (self.selected_action - 1) % (len(self.actions) + 1)
+                self.rebind_index = 0
             elif event.key == pygame.K_DOWN or event.key == pygame.K_s:
                 self.selected_action = (self.selected_action + 1) % (len(self.actions) + 1)
+                self.rebind_index = 0
             elif event.key == pygame.K_LEFT or event.key == pygame.K_a:
                 action = self.actions[self.selected_action]
                 self.rebind_index = max(0, self.rebind_index - 1)

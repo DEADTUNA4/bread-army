@@ -14,7 +14,8 @@ from src.level.tilemap import TileMap
 from src.level.spawner import Spawner
 from src.entities.player import Player
 from src.entities.projectile import Projectile
-from src.ui.menu import MainMenu, PauseMenu, GameOverMenu, WinMenu, SettingsMenu
+from src.ui.menu import MainMenu, PauseMenu, GameOverMenu, WinMenu
+from src.ui.settings import SettingsMenu
 from src.ui.hud import HUD
 from src.ui.effects import ParticleSystem, ScreenShake
 from src.ui.parallax import ParallaxBackground
@@ -139,6 +140,7 @@ class PlayingState(State):
                                 self.score += 100
 
     def update(self, dt):
+        self.hud.update(dt)
         self.frame_counter += 1
 
         if self.rage_quote_timer > 0:
