@@ -2,9 +2,10 @@ import pygame
 import random
 import sys
 import os
+import json
 sys.path.insert(0, os.path.dirname(__file__))
 
-from settings import WINDOW_WIDTH, WINDOW_HEIGHT, SKY_BLUE, RED, ORANGE, DARK_RED, WHITE, BLACK, GOLD, DEATH_DELAY
+from settings import WINDOW_WIDTH, WINDOW_HEIGHT, SKY_BLUE, RED, ORANGE, DARK_RED, WHITE, BLACK, GOLD, DEATH_DELAY, BROWN, TAN
 from src.engine.game import Game
 from src.engine.state import State
 from src.engine.physics import Physics
@@ -13,12 +14,41 @@ from src.level.tilemap import TileMap
 from src.level.spawner import Spawner
 from src.entities.player import Player
 from src.entities.projectile import Projectile
-from src.ui.menu import MainMenu, PauseMenu, GameOverMenu, WinMenu
+from src.ui.menu import MainMenu, PauseMenu, GameOverMenu, WinMenu, SettingsMenu
 from src.ui.hud import HUD
 from src.ui.effects import ParticleSystem, ScreenShake
+from src.ui.parallax import ParallaxBackground
 from src.online.level_manager import LevelManager
 
 LEVELS = ["level_01", "level_02", "level_03", "level_04", "level_05"]
+
+CONTROLS_FILE = "controls.json"
+
+
+def load_controls():
+    defaults = {
+        "left": ["K_LEFT", "K_a"],
+        "right": ["K_RIGHT", "K_d"],
+        "jump": ["K_SPACE", "K_UP", "K_w"],
+        "attack": ["K_f", "K_e"],
+        "pause": ["K_ESCAPE"],
+    }
+    if os.path.exists(CONTROLS_FILE):
+        try:
+            with open(CONTROLS_FILE, "r") as f:
+                data = json.load(f)
+            for key in defaults:
+                if key not in data:
+                    data[key] = defaults[key]
+            return data
+        except Exception:
+            pass
+    return defaults
+
+
+def save_controls(controls):
+    with open(CONTROLS_FILE, "w") as f:
+        json.dump(controls, f, indent=2)
 
 
 class PlayingState(State):
@@ -28,7 +58,9 @@ class PlayingState(State):
         self.hud = HUD()
         self.particles = ParticleSystem()
         self.screen_shake = ScreenShake()
+        self.parallax = ParallaxBackground()
         self.level_manager = LevelManager()
+        self.controls = load_controls()
         self.score = 0
         self.level_index = 0
         self.total_deaths = 0
@@ -36,6 +68,9 @@ class PlayingState(State):
         self.rage_flash = 0
         self.rage_quote = ""
         self.rage_quote_timer = 0
+        self.transition_alpha = 0
+        self.transitioning = False
+        self.transition_target = None
         self.reset_level()
 
     def reset_level(self):
@@ -57,9 +92,11 @@ class PlayingState(State):
 
         self.enemies = [e for e in self.spawner.get_entities() if hasattr(e, 'hp')]
         self.powerups = [p for p in self.spawner.get_entities() if not hasattr(p, 'hp')]
-
+        self.blocks = self.spawner.get_blocks()
         self.entities = self.spawner.get_entities()
         self.goal_x = self.tilemap.pixel_width - 64
+
+        self.parallax.generate(self.tilemap.pixel_width, self.tilemap.pixel_height)
 
     def enter(self):
         self.total_deaths = 0
@@ -68,13 +105,29 @@ class PlayingState(State):
         self.rage_flash = 0
         self.rage_quote = ""
         self.rage_quote_timer = 0
+        self.controls = load_controls()
         self.reset_level()
+
+    def _key_pressed(self, action):
+        keys = pygame.key.get_pressed()
+        for key_name in self.controls.get(action, []):
+            key_val = getattr(pygame, key_name, None)
+            if key_val is not None and keys[key_val]:
+                return True
+        return False
+
+    def _key_just_pressed(self, action, event):
+        for key_name in self.controls.get(action, []):
+            key_val = getattr(pygame, key_name, None)
+            if key_val is not None and event.key == key_val:
+                return True
+        return False
 
     def handle_event(self, event):
         if event.type == pygame.KEYDOWN:
-            if event.key == pygame.K_ESCAPE:
+            if self._key_just_pressed("pause", event):
                 self.game.change_state("paused")
-            elif event.key in (pygame.K_f, pygame.K_e):
+            elif self._key_just_pressed("attack", event):
                 if self.player.attack():
                     attack_rect = self.player.get_attack_rect()
                     for enemy in self.enemies[:]:
@@ -116,18 +169,52 @@ class PlayingState(State):
             self.game.change_state("game_over")
             return
 
-        keys = pygame.key.get_pressed()
-        self.player.handle_input(keys)
-        self.physics.apply_gravity(self.player, dt)
+        for block in self.blocks:
+            block.update(dt)
 
         solid_tiles = self.tilemap.get_solid_tiles()
-        self.physics.move_and_collide(self.player, solid_tiles, dt)
+
+        block_rects = []
+        for b in self.blocks:
+            if hasattr(b, 'solid') and b.solid:
+                block_rects.append(b.rect)
+
+        all_solid = solid_tiles + block_rects
+
+        carry_dx = 0
+        carry_dy = 0
+        for block in self.blocks:
+            if hasattr(block, 'carry_dx') and self.player.on_ground:
+                pb = pygame.Rect(block.rect.x, block.rect.y - 2, block.rect.width, 4)
+                if self.player.rect.colliderect(pb):
+                    carry_dx = block.carry_dx
+                    carry_dy = block.carry_dy
+
+        self.player.rect.x += carry_dx
+        self.player.rect.y += carry_dy
+
+        self.player.handle_input(self._key_pressed)
+        self.physics.apply_gravity(self.player, dt)
+        self.physics.move_and_collide(self.player, all_solid, dt, (self.tilemap.pixel_width, self.tilemap.pixel_height))
         self.player.update(dt)
+
+        for block in self.blocks:
+            if hasattr(block, 'on_step') and self.player.on_ground:
+                if self.player.rect.colliderect(block.rect):
+                    block.on_step()
 
         self.camera.follow(self.player)
 
         for enemy in self.enemies[:]:
             enemy.update(solid_tiles, self.player, dt)
+            if enemy.rect.left < 0:
+                enemy.rect.left = 0
+                enemy.direction = 1
+                enemy.vx = 0
+            if enemy.rect.right > self.tilemap.pixel_width:
+                enemy.rect.right = self.tilemap.pixel_width
+                enemy.direction = -1
+                enemy.vx = 0
             if not enemy.alive:
                 self.enemies.remove(enemy)
                 self.particles.emit(enemy.rect.centerx, enemy.rect.centery, 20, (200, 180, 140))
@@ -191,12 +278,16 @@ class PlayingState(State):
             self.game.change_state("win")
         else:
             self.level_index += 1
+            self.total_deaths = self.player.death_count
             self.reset_level()
 
     def render(self, surface):
-        surface.fill(SKY_BLUE)
+        self.parallax.render(surface, self.camera, self.frame_counter)
 
         self.tilemap.draw(surface, self.camera, self.frame_counter)
+
+        for block in self.blocks:
+            block.draw(surface, self.camera)
 
         goal_rect = pygame.Rect(self.goal_x, 0, 32, self.tilemap.pixel_height)
         screen_goal = self.camera.apply(goal_rect)
@@ -204,6 +295,10 @@ class PlayingState(State):
             pulse = abs(int(self.frame_counter * 0.1)) % 30
             pygame.draw.rect(surface, (255, 215 + pulse, 0), screen_goal)
             pygame.draw.rect(surface, (200, 170, 0), screen_goal, 2)
+            flag_y = screen_goal.y - 24
+            pygame.draw.rect(surface, (139, 69, 19), (screen_goal.centerx - 2, flag_y, 4, 32))
+            pygame.draw.polygon(surface, (255, 50, 50),
+                              [(screen_goal.centerx + 2, flag_y), (screen_goal.centerx + 24, flag_y + 8), (screen_goal.centerx + 2, flag_y + 16)])
 
         for powerup in self.powerups:
             powerup.draw(surface, self.camera)
@@ -233,9 +328,10 @@ class PlayingState(State):
 
         if self.rage_quote_timer > 0 and self.rage_quote:
             quote_font = pygame.font.Font(None, 48)
-            alpha = min(self.rage_quote_timer / 30, 1.0)
             quote_text = quote_font.render(self.rage_quote, True, (255, 50, 50))
             quote_rect = quote_text.get_rect(center=(WINDOW_WIDTH // 2, WINDOW_HEIGHT // 3))
+            shadow = quote_font.render(self.rage_quote, True, (0, 0, 0))
+            surface.blit(shadow, (quote_rect.x + 2, quote_rect.y + 2))
             surface.blit(quote_text, quote_rect)
 
             sub_font = pygame.font.Font(None, 24)
@@ -252,12 +348,14 @@ def main():
     paused = PauseMenu(game)
     game_over = GameOverMenu(game)
     win = WinMenu(game)
+    settings = SettingsMenu(game)
 
     game.state_machine.add_state("main_menu", main_menu)
     game.state_machine.add_state("playing", playing)
     game.state_machine.add_state("paused", paused)
     game.state_machine.add_state("game_over", game_over)
     game.state_machine.add_state("win", win)
+    game.state_machine.add_state("settings", settings)
 
     game.change_state("main_menu")
     game.run()

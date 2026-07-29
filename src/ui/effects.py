@@ -71,12 +71,11 @@ class ScreenShake:
     def update(self, dt=1.0):
         if self.intensity > 0:
             self.offset = (
-                random.randint(-self.intensity, self.intensity),
-                random.randint(-self.intensity, self.intensity),
+                random.randint(-int(self.intensity), int(self.intensity)),
+                random.randint(-int(self.intensity), int(self.intensity)),
             )
             self.intensity -= 0.5 * dt
-            if self.intensity < 0:
+            if self.intensity < 0.5:
                 self.intensity = 0
-                self.offset = (0, 0)
         else:
             self.offset = (0, 0)

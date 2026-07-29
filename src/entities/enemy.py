@@ -131,32 +131,50 @@ class Enemy:
             if self.vy > 15:
                 self.vy = 15
 
-        self.rect.x += self.vx * dt
-        for tile in tiles:
-            if self.rect.colliderect(tile.rect):
-                if self.vx > 0:
-                    self.rect.right = tile.rect.left
-                elif self.vx < 0:
-                    self.rect.left = tile.rect.right
-                self.direction *= -1
-                self.vx *= -1
+        step_size = 8
+        dx = self.vx * dt
+        dy = self.vy * dt
 
-        if not getattr(self, 'flying', False):
-            self.rect.y += self.vy * dt
-            self.on_ground = False
+        steps_x = max(1, int(abs(dx) / step_size) + 1)
+        steps_y = max(1, int(abs(dy) / step_size) + 1)
+
+        step_dx = dx / steps_x
+        step_dy = dy / steps_y
+
+        hit_wall = False
+        for _ in range(int(steps_x)):
+            self.rect.x += step_dx
             for tile in tiles:
                 if self.rect.colliderect(tile.rect):
-                    if self.vy > 0:
+                    if step_dx > 0:
+                        self.rect.right = tile.rect.left
+                    elif step_dx < 0:
+                        self.rect.left = tile.rect.right
+                    hit_wall = True
+                    self.vx = 0
+
+        if hit_wall:
+            self.direction *= -1
+
+        self.on_ground = False
+        for _ in range(int(steps_y)):
+            self.rect.y += step_dy
+            for tile in tiles:
+                if self.rect.colliderect(tile.rect):
+                    if step_dy > 0:
                         self.rect.bottom = tile.rect.top
                         self.vy = 0
                         self.on_ground = True
-                    elif self.vy < 0:
+                    elif step_dy < 0:
                         self.rect.top = tile.rect.bottom
                         self.vy = 0
-        else:
-            self.rect.y += self.vy * dt
 
-        if self.rect.top > 1000:
+        if self.rect.left < 0:
+            self.rect.left = 0
+            self.direction = 1
+            self.vx = 0
+
+        if self.rect.top > 1200:
             self.alive = False
 
     def get_attack_rect(self):

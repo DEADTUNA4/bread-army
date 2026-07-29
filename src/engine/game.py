@@ -18,14 +18,19 @@ class Game:
         self.state_machine.set_state(name)
 
     def run(self):
-        while self.running:
-            self.dt = min(self.clock.tick(FPS) / 16.667, 3.0)
-            for event in pygame.event.get():
-                if event.type == pygame.QUIT:
-                    self.running = False
-                self.state_machine.handle_event(event)
-            self.state_machine.update(self.dt)
-            self.state_machine.render(self.screen)
-            pygame.display.flip()
+        try:
+            while self.running:
+                self.dt = min(self.clock.tick(FPS) / 16.667, 3.0)
+                for event in pygame.event.get():
+                    if event.type == pygame.QUIT:
+                        self.running = False
+                    self.state_machine.handle_event(event)
+                self.state_machine.update(self.dt)
+                self.state_machine.render(self.screen)
+                pygame.display.flip()
+        except Exception as e:
+            import traceback
+            traceback.print_exc()
+            input("Press Enter to exit...")
         pygame.quit()
         sys.exit()

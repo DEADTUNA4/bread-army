@@ -24,6 +24,7 @@ class Player:
         self.animation_timer = 0
         self.death_count = 0
         self.kickback = 0
+        self.powerup = None
 
     def handle_input(self, keys):
         if self.dying:
@@ -54,6 +55,9 @@ class Player:
             self.health = 0
             self.die()
         return True
+
+    def set_powerup(self, powerup):
+        self.powerup = powerup
 
     def die(self):
         if self.dying:
