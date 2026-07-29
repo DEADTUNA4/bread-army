@@ -19,7 +19,7 @@ class Game:
 
     def run(self):
         while self.running:
-            self.dt = self.clock.tick(FPS) / 16.667
+            self.dt = min(self.clock.tick(FPS) / 16.667, 3.0)
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
                     self.running = False
