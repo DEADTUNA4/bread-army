@@ -4,6 +4,8 @@ WINDOW_WIDTH = 800
 WINDOW_HEIGHT = 600
 TITLE = "Bread Army - Rage Edition"
 FPS = 60
+VERSION = "v1.0.0"
+GITHUB_REPO = "DEADTUNA4/bread-army"
 
 TILE_SIZE = 32
 GRAVITY = 0.45

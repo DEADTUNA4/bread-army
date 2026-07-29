@@ -347,6 +347,26 @@ class PlayingState(State):
 
 
 def main():
+    from settings import VERSION
+    from src.online.updater import get_latest_version, needs_update, download_update, apply_update, clean_temp, restart as restart_game
+
+    print(f"Bread Army {VERSION}")
+    print("Checking for updates...")
+    latest = get_latest_version()
+    if latest and needs_update(latest):
+        print(f"Update found: {latest}")
+        update_dir = download_update(latest)
+        if update_dir:
+            print("Applying update...")
+            apply_update(update_dir)
+            clean_temp(update_dir)
+            print("Update applied! Restarting...")
+            restart_game()
+        else:
+            print("Download failed, continuing with current version.")
+    else:
+        print("You are on the latest version.")
+
     game = Game()
 
     main_menu = MainMenu(game)
