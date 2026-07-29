@@ -8,7 +8,7 @@ import requests
 
 from settings import VERSION, GITHUB_REPO
 
-API_URL = f"https://api.github.com/repos/{GITHUB_REPO}/releases/latest"
+API_URL = f"https://api.github.com/repos/{GITHUB_REPO}/tags"
 GAME_DIR = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 
@@ -16,8 +16,9 @@ def get_latest_version():
     try:
         resp = requests.get(API_URL, timeout=5)
         if resp.status_code == 200:
-            data = resp.json()
-            return data.get("tag_name", "")
+            tags = resp.json()
+            if tags:
+                return tags[0].get("name", "")
     except requests.RequestException:
         pass
     return None
