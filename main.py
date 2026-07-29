@@ -17,6 +17,8 @@ from src.ui.hud import HUD
 from src.ui.effects import ParticleSystem, ScreenShake
 from src.online.level_manager import LevelManager
 
+LEVELS = ["level_01", "level_02", "level_03", "level_04", "level_05"]
+
 
 class PlayingState(State):
     def __init__(self, game):
@@ -27,10 +29,11 @@ class PlayingState(State):
         self.screen_shake = ScreenShake()
         self.level_manager = LevelManager()
         self.score = 0
-        self.level_name = "level_01"
+        self.level_index = 0
         self.reset_level()
 
     def reset_level(self):
+        self.level_name = LEVELS[self.level_index]
         level_path = self.level_manager.get_level_path(self.level_name)
         if level_path is None:
             level_path = f"levels/{self.level_name}.json"
@@ -41,7 +44,6 @@ class PlayingState(State):
         self.spawner = Spawner(level_path)
         self.camera = Camera(self.tilemap.pixel_width, self.tilemap.pixel_height)
         self.projectiles = []
-        self.goal_rect = None
 
         player_x, player_y = self.spawner.player_start
         self.player = Player(player_x, player_y)
@@ -50,6 +52,12 @@ class PlayingState(State):
         self.powerups = [p for p in self.spawner.get_entities() if not hasattr(p, 'hp')]
 
         self.entities = self.spawner.get_entities()
+        self.goal_x = self.tilemap.pixel_width - 64
+
+    def enter(self):
+        self.level_index = 0
+        self.score = 0
+        self.reset_level()
 
     def handle_event(self, event):
         if event.type == pygame.KEYDOWN:
@@ -117,13 +125,29 @@ class PlayingState(State):
                     if not enemy.alive:
                         self.score += 100
 
+        if self.player.rect.x >= self.goal_x:
+            self.next_level()
+
         self.particles.update(dt)
         self.screen_shake.update(dt)
+
+    def next_level(self):
+        if self.level_index + 1 >= len(LEVELS):
+            self.game.change_state("win")
+        else:
+            self.level_index += 1
+            self.reset_level()
 
     def render(self, surface):
         surface.fill(SKY_BLUE)
 
         self.tilemap.draw(surface, self.camera)
+
+        goal_rect = pygame.Rect(self.goal_x, 0, 32, self.tilemap.pixel_height)
+        screen_goal = self.camera.apply(goal_rect)
+        if screen_goal.right > 0 and screen_goal.left < WINDOW_WIDTH:
+            pygame.draw.rect(surface, (255, 215, 0), screen_goal)
+            pygame.draw.rect(surface, (200, 170, 0), screen_goal, 2)
 
         for powerup in self.powerups:
             powerup.draw(surface, self.camera)
@@ -138,11 +162,10 @@ class PlayingState(State):
 
         self.particles.draw(surface, self.camera)
 
-        self.hud.render(surface, self.player, self.level_name.replace("_", " ").title(), self.score)
+        self.hud.render(surface, self.player, f"{self.level_name.replace('_', ' ').title()} ({self.level_index+1}/{len(LEVELS)})", self.score)
 
         shake = self.screen_shake.offset
         if shake != (0, 0):
-            old_pos = surface.get_rect().topleft
             surface.scroll(shake[0], shake[1])
 
 

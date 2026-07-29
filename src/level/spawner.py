@@ -28,7 +28,6 @@ class Spawner:
                     elif entity_type in ("mold_slime", "stale_cracker", "evil_crouton", "bread_golem"):
                         self.entities.append(Enemy(x, y, entity_type))
                     elif entity_type in ("toast", "croissant", "bagel", "sourdough"):
-                        from src.entities.powerup import PowerUp
                         self.entities.append(PowerUp(x, y, entity_type))
 
     def get_entities(self):
