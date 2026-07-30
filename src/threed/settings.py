@@ -1,18 +1,18 @@
 VERSION = "v1.0.0"
 GITHUB_REPO = "DEADTUNA4/bread-army"
 
-WHITE = color.white
-BLACK = color.black
-RED = color.red
-GREEN = color.green
-BLUE = color.blue
-GOLD = color.hex("#ffd700")
-TAN = color.hex("#d2b48c")
-BROWN = color.hex("#8b4513")
-GRAY = color.gray
-DARK_RED = color.hex("#961414")
-ORANGE = color.orange
-SKY_BLUE = color.hex("#87ceeb")
+WHITE = (255, 255, 255)
+BLACK = (0, 0, 0)
+RED = (255, 50, 50)
+GREEN = (50, 255, 50)
+BLUE = (50, 50, 255)
+GOLD = (255, 215, 0)
+TAN = (210, 180, 140)
+BROWN = (139, 69, 19)
+GRAY = (128, 128, 128)
+DARK_RED = (150, 20, 20)
+ORANGE = (255, 100, 0)
+SKY_BLUE = (135, 206, 235)
 
 RAGE_QUOTES = [
     "YOU DIED. LMAO.",
