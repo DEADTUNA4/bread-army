@@ -458,9 +458,10 @@ class Game3D:
                     self.pz = nz
             self.p_facing = math.atan2(mx, mz)
 
-        # Ground / gravity
+        # Ground check
         gnd = self.get_ground(self.px, self.pz)
-        if gnd > -999 and self.py <= gnd + 0.5 and self.p_vy <= 0:
+        feet_y = self.py - 0.5
+        if gnd > -999 and feet_y <= gnd + 0.1 and self.p_vy <= 0:
             self.p_grounded = True
             self.py = gnd + 0.5
             self.p_vy = 0
@@ -471,8 +472,17 @@ class Game3D:
             self.p_vy = 10
             self.p_grounded = False
 
+        # Apply gravity with capped fall speed to prevent tunneling
         self.p_vy -= 30 * dt
+        self.p_vy = max(self.p_vy, -15)
         self.py += self.p_vy * dt
+
+        # Anti-tunneling: snap to ground if we passed through it
+        gnd = self.get_ground(self.px, self.pz)
+        if gnd > -999 and self.py - 0.5 <= gnd and self.p_vy <= 0:
+            self.py = gnd + 0.5
+            self.p_vy = 0
+            self.p_grounded = True
 
         if self.py < -20 and not self.p_dying:
             self.start_death()
